@@ -21,21 +21,47 @@
 ************************************************/
 
 
- void Delay(u32 count)
- {
-   u32 i=0;
-   for(;i<count;i++);
- }
+char gsrc_buf[1024];
+char gdst_buf[1024];
+
  int main(void)
  {
+ 	uint32_t index = 0;
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	uart_init(115200);
+	delay_init();
+
+	for(index = 0; index < 1024; index ++)
+	{
+		gsrc_buf[index] = index;
+	}
+	memset(gdst_buf, 0, 1024);
+
+	//dma_memcpy(gsrc_buf, gdst_buf, 1024);
+
+	printf("dst:");
+	for(index = 0; index < 1024; index ++)
+	{
+		printf("0x%02x ", gdst_buf[index]);
+	}
+	
+	while(1)
+	{
+		printf("heello\r\n");
+		delay_ms(1000);
+	}
+
+ 
+ #if 0
 	uint8_t key_value = 0;
 	uart_para_t uart_init_data;
+	uint8_t index = 0;
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
  
 	delay_init();
 
-	uart_init_data.baud = 115200;
+	uart_init_data.baud = 9600;
 	uart_init_data.parity = PARITY_NONE;
 	uart_init_data.stop_bit = STOP_BIT_1;
 	uart_init_data.word_length = WORD_LENGTH_8B;
@@ -43,7 +69,11 @@
 
 	while(1)
 	{
-		gpio_uart_senddata(0x0a);
+		index = 0;
+		for(index = 0; index < 255; index ++)
+		{
+			gpio_uart_senddata(index);
+		}
 		delay_ms(1000);
 	}
 	
@@ -73,4 +103,5 @@
 		delay_ms(100);
 #endif		
 	}
+#endif	
  }
