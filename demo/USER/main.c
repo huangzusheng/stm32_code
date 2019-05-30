@@ -6,6 +6,7 @@
 #include "uart.h"
 #include "exti.h"
 #include "timer.h"
+#include "gpio_uart.h"
 
 
 /************************************************
@@ -28,10 +29,24 @@
  int main(void)
  {
 	uint8_t key_value = 0;
+	uart_para_t uart_init_data;
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
  
 	delay_init();
+
+	uart_init_data.baud = 115200;
+	uart_init_data.parity = PARITY_NONE;
+	uart_init_data.stop_bit = STOP_BIT_1;
+	uart_init_data.word_length = WORD_LENGTH_8B;
+	gpio_uart_init(&uart_init_data);
+
+	while(1)
+	{
+		gpio_uart_senddata(0x0a);
+		delay_ms(1000);
+	}
+	
 	led_init();
 	beep_init();
 	key_init();
